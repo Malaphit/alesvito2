@@ -89,7 +89,7 @@ header {
 }
 
 .search-input {
-    padding: 5px 30px 5px 10px; /* Пространство для лупы справа */
+    padding: 5px 30px 5px 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
@@ -110,8 +110,13 @@ header {
 
 .search-input:focus {
     border-color: #007bff;
-    width: 200px; /* Расширяется при фокусе */
+    width: 200px;
     transition: width 0.3s;
+}
+
+/* Уберем стили для search-results, так как не используем выпадающий список */
+.search-results {
+    display: none; /* Убираем, так как будем фильтровать прямо в каталоге */
 }
 
 main {
@@ -124,56 +129,26 @@ main {
 
 
 /* Каталог */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+}
+
 .catalog {
     width: 100%;
-    max-width: 1200px;
+   
 }
 
 .products {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Адаптивная сетка */
     gap: 20px;
-    max-width: 100%;
 }
 
-.product-card {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-    background-color: #f9f9f9;
-}
-
-.product-card img {
-    max-width: 100%;
-    height: auto;
-}
-
-.product-card h3 {
-    font-size: 16px;
-    margin: 10px 0;
-}
-
-.product-card .price {
-    font-weight: bold;
-    margin: 5px 0;
-    color: #333;
-}
-
-.product-card button {
-    background-color: #007bff;
-    color: white;
-    border: 1px solid #007bff;
-    padding: 5px 10px;
-    cursor: pointer;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.product-card button:hover {
-    background-color: #0056b3;
-}
-
-/* Ограничение на 5 карточек в строке */
+/* Фиксируем 5 товаров в строке на больших экранах */
 @media (min-width: 1200px) {
     .products {
         grid-template-columns: repeat(5, 1fr);
@@ -184,16 +159,33 @@ main {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
 }
 
 .product-card img {
     max-width: 100%;
     height: auto;
+    border-radius: 5px;
+    cursor: pointer; /* Указывает, что фото кликабельно */
+}
+
+.product-card h3 {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #333;
 }
 
 .product-card .price {
     font-weight: bold;
-    margin: 10px 0;
+    margin: 5px 0;
+    color: #555;
 }
 
 .product-card button {
@@ -202,10 +194,16 @@ main {
     border: none;
     padding: 5px 10px;
     cursor: pointer;
+    border-radius: 3px;
+    margin-top: 5px;
 }
 
-.product-card button:hover {
-    background-color: #0056b3;
+.product-card .add-to-cart {
+    background-color: #28a745; /* Зеленый цвет для "В корзину" */
+}
+
+.product-card .add-to-cart:hover {
+    background-color: #218838;
 }
 
 .registration-form, .catalog {
@@ -213,7 +211,7 @@ main {
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    width: 300px;
+
 }
 
 .registration-form h1 {
