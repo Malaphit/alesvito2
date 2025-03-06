@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlesVito - Каталог</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="header-nav">
+            <div class="nav-left">
+                <a href="#" class="nav-item catalog-link" id="catalogLink">Каталог</a>
+                <div class="dropdown" id="catalogDropdown"></div>
+                <a href="#" class="nav-item">Частые вопросы</a>
+            </div>
+            <div class="nav-center">
+                <img src="/logo.png" alt="AlesVito Logo" class="logo" width="50">
+            </div>
+            <div class="nav-right">
+                <a href="#" class="nav-item search-icon" id="searchIcon">🔍</a>
+                <div class="search-input" id="searchInput">
+                    <input type="text" id="searchQuery" placeholder="Поиск...">
+                    <div id="searchResults"></div>
+                </div>
+                <a href="#" class="nav-item cart-icon">🛒</a>
+                <a href="#" class="nav-item profile-icon" id="profileLink">👤</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="catalog">
+            <div id="message" style="color: red;"></div>
+            <div class="products" id="productList"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 AlesVito. Все права защищены.</p>
+    </footer>
+    <script src="/script.js"></script>
+</body>
+</html>

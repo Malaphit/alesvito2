@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Логин - AlesVito</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-right">
+                <input type="text" placeholder="Поиск..." class="search-bar">
+                <img src="logo.png" alt="AlesVito Logo" class="logoAV" width="110wm">
+                <div class="right-icon">
+                <a href="#" class="user-icon">👤</a>
+                <a href="#" class="cart-icon">🛒</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="registration-form">
+            <h1>Login</h1>
+            <div id="message" style="color: red;"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="create-btn">Sign in</button>
+            </form>
+            <div class="auth-links">
+                <a href="/forgot-password.html">Forgot password?</a> | <a href="/register.html">Register</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 AlesVito. Все права защищены.</p>
+    </footer>
+    <script src="/script.js"></script>
+</body>
+</html>

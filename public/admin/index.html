@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - AlesVito</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-center">
+                <img src="/logo.png" alt="AlesVito Logo" class="logo" width="50">
+            </div>
+            <div class="nav-right">
+                <a href="#" class="user-icon">👤</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="registration-form">
+            <h1>Admin Panel</h1>
+            <div id="adminMessage" style="color: red;"></div>
+            <h2>Manage Categories</h2>
+            <form id="addCategoryForm">
+                <div class="form-group">
+                    <label for="categoryName">Category Name</label>
+                    <input type="text" id="categoryName" name="categoryName" required>
+                </div>
+                <div class="form-group">
+                    <label for="categoryDescription">Description</label>
+                    <input type="text" id="categoryDescription" name="categoryDescription">
+                </div>
+                <button type="submit" class="create-btn">Add Category</button>
+            </form>
+            <h2>Manage Products</h2>
+            <form id="addProductForm">
+                <div class="form-group">
+                    <label for="productName">Product Name</label>
+                    <input type="text" id="productName" name="productName" required>
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Description</label>
+                    <input type="text" id="productDescription" name="productDescription">
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">Price</label>
+                    <input type="number" id="productPrice" name="productPrice" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="productImage">Image URL</label>
+                    <input type="text" id="productImage" name="productImage">
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Category</label>
+                    <select id="productCategory" name="productCategory">
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                <button type="submit" class="create-btn">Add Product</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 AlesVito. Все права защищены.</p>
+    </footer>
+    <script src="/script.js"></script>
+</body>
+</html>
