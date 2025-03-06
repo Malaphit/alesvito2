@@ -64,61 +64,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Поиск
-    const searchIcon = document.getElementById('searchIcon');
-    const searchInput = document.getElementById('searchInput');
     const searchQuery = document.getElementById('searchQuery');
     const searchResults = document.getElementById('searchResults');
 
-    if (searchIcon) {
-        searchIcon.addEventListener('click', (e) => {
-            e.preventDefault(); // Предотвращаем стандартное поведение ссылки
-            searchInput.classList.toggle('active');
-            if (searchInput.classList.contains('active')) {
-                searchQuery.focus();
+    if (searchQuery) {
+        searchQuery.addEventListener('input', async (e) => {
+            const query = e.target.value;
+            if (!query) {
+                searchResults.innerHTML = '';
+                return;
+            }
+            try {
+                const response = await fetch(`http://localhost:5000/api/products/search?q=${query}`);
+                const products = await response.json();
+                if (!response.ok) throw new Error(products.error || 'Search failed');
+                const categoriesResponse = await fetch('http://localhost:5000/api/categories');
+                const categories = await categoriesResponse.json();
+                const results = [
+                    ...products.map(p => ({ type: 'product', name: p.name, id: p.id })),
+                    ...categories.map(c => ({ type: 'category', name: c.name, id: c.id }))
+                ].filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
+                searchResults.innerHTML = results.map(item => `
+                    <div data-id="${item.id}" data-type="${item.type}">${item.name} (${item.type})</div>
+                `).join('');
+                searchResults.querySelectorAll('div').forEach(result => {
+                    result.addEventListener('click', () => {
+                        const type = result.getAttribute('data-type');
+                        if (type === 'product') {
+                            loadProducts(item.name); // Или перенаправление на страницу товара
+                        } else {
+                            loadProducts(item.name);
+                        }
+                        searchQuery.value = '';
+                        searchResults.innerHTML = '';
+                    });
+                });
+            } catch (err) {
+                searchResults.innerHTML = `<div style="color: red;">${err.message}</div>`;
             }
         });
     }
-
-    async function searchProducts(query) {
-        if (!query) {
-            searchResults.innerHTML = '';
-            return;
-        }
-        try {
-            const response = await fetch(`http://localhost:5000/api/products/search?q=${query}`);
-            const products = await response.json();
-            if (!response.ok) throw new Error(products.error || 'Search failed');
-            const categoriesResponse = await fetch('http://localhost:5000/api/categories');
-            const categories = await categoriesResponse.json();
-            const results = [
-                ...products.map(p => ({ type: 'product', name: p.name, id: p.id })),
-                ...categories.map(c => ({ type: 'category', name: c.name, id: c.id }))
-            ].filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
-            searchResults.innerHTML = results.map(item => `
-                <div data-id="${item.id}" data-type="${item.type}">${item.name} (${item.type})</div>
-            `).join('');
-            searchResults.querySelectorAll('div').forEach(result => {
-                result.addEventListener('click', () => {
-                    const type = result.getAttribute('data-type');
-                    if (type === 'product') {
-                        loadProducts(item.name); // Или перенаправление на страницу товара
-                    } else {
-                        loadProducts(item.name);
-                    }
-                    searchInput.classList.remove('active');
-                });
-            });
-        } catch (err) {
-            searchResults.innerHTML = `<div style="color: red;">${err.message}</div>`;
-        }
-    }
-
-    if (searchQuery) {
-        searchQuery.addEventListener('input', (e) => {
-            searchProducts(e.target.value);
-        });
-    }
-
     // Проверка профиля (оставим на потом)
     const profileLink = document.getElementById('profileLink');
     if (profileLink) {

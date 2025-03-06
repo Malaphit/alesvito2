@@ -83,47 +83,35 @@ header {
 }
 
 /* Поиск */
-.search-icon {
-    font-size: 20px;
+.search-container {
+    position: relative;
+    margin-right: 15px;
 }
 
 .search-input {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: -300px;
-    width: 300px;
-    height: 100%;
-    background-color: #222;
-    transition: left 0.3s;
-    padding: 20px;
+    padding: 5px 30px 5px 10px; /* Пространство для лупы справа */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 150px;
     box-sizing: border-box;
+    outline: none;
 }
 
-.search-input.active {
-    left: 400px; /* Выезжает на экран */
-}
-
-#searchQuery {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-}
-
-#searchResults {
-    color: white;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-#searchResults div {
-    padding: 5px;
+.search-icon {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333;
     cursor: pointer;
+    font-size: 18px;
 }
 
-#searchResults div:hover {
-    background-color: #444;
+.search-input:focus {
+    border-color: #007bff;
+    width: 200px; /* Расширяется при фокусе */
+    transition: width 0.3s;
 }
 
 main {
