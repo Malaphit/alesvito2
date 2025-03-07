@@ -153,18 +153,43 @@ app.get('/api/categories', async (req, res) => {
     }
   });
 
-  app.get('/api/products/search', async (req, res) => {
-    const { q } = req.query;
+  app.get('/api/products', async (req, res) => {
+    const { category } = req.query;
     try {
-      const result = await pool.query(
-        `SELECT p.*, c.name AS category_name
-         FROM products p
-         LEFT JOIN categories c ON p.category_id = c.id
-         WHERE p.name ILIKE $1`,
-        [`%${q}%`]
-      );
-      res.status(200).json(result.rows);
+        let query = `
+            SELECT p.*, c.name AS category_name
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.id
+        `;
+        const params = [];
+        if (category && category !== 'all') {
+            query += ' WHERE c.name = $1';
+            params.push(category);
+        }
+        const result = await pool.query(query, params);
+        res.status(200).json(result.rows);
     } catch (err) {
-      res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
-  });
+});
+
+app.get('/product.html', (req, res) => {
+    const productId = req.query.id;
+    // Здесь можно добавить логику для получения данных о товаре по ID
+    res.send(`
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Product Details</title>
+            <link rel="stylesheet" href="/styles.css">
+        </head>
+        <body>
+            <h1>Product ID: ${productId}</h1>
+            <p>Страница товара (доработать позже)</p>
+            <a href="/">Back to Catalog</a>
+        </body>
+        </html>
+    `);
+});

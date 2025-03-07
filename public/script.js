@@ -8,15 +8,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const products = await response.json();
             if (!response.ok) throw new Error(products.error || 'Failed to load products');
             productList.innerHTML = products.map(product => `
-                <div class="product-card">
-                    <img src="${product.image_url || '/placeholder.jpg'}" alt="${product.name}">
+                <div class="product-card" data-name="${product.name.toLowerCase()}" data-id="${product.id}">
+                    <img src="${product.image_url || '/placeholder.jpg'}" alt="${product.name}" data-product-id="${product.id}">
                     <h3>${product.name}</h3>
                     <p class="price">${product.price} DZD</p>
-                    <button>Choose options</button>
+                    <button class="add-to-cart">В корзину</button>
                 </div>
             `).join('');
+            // Добавляем обработчики после рендера
+            document.querySelectorAll('.product-card img').forEach(img => {
+                img.addEventListener('click', () => {
+                    const productId = img.getAttribute('data-product-id');
+                    window.location.href = `/product.html?id=${productId}`; // Переход на страницу товара
+                });
+            });
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', () => {
+                    const productCard = button.closest('.product-card');
+                    const productName = productCard.querySelector('h3').textContent;
+                    const productPrice = productCard.querySelector('.price').textContent;
+                    alert(`Добавлено в корзину: ${productName} - ${productPrice}`);
+                    // Здесь можно добавить логику добавления в корзину (например, в localStorage)
+                });
+            });
         } catch (err) {
             productList.innerHTML = `<p style="color: red;">${err.message}</p>`;
+            console.error('Error loading products:', err);
         }
     }
 
@@ -65,46 +82,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Поиск
     const searchQuery = document.getElementById('searchQuery');
-    const searchResults = document.getElementById('searchResults');
+    const productList = document.getElementById('productList');
 
     if (searchQuery) {
-        searchQuery.addEventListener('input', async (e) => {
-            const query = e.target.value;
+        searchQuery.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            const productCards = productList.getElementsByClassName('product-card');
+
             if (!query) {
-                searchResults.innerHTML = '';
+                // Если запрос пустой, показываем все товары
+                for (let card of productCards) {
+                    card.style.display = 'block';
+                }
                 return;
             }
-            try {
-                const response = await fetch(`http://localhost:5000/api/products/search?q=${query}`);
-                const products = await response.json();
-                if (!response.ok) throw new Error(products.error || 'Search failed');
-                const categoriesResponse = await fetch('http://localhost:5000/api/categories');
-                const categories = await categoriesResponse.json();
-                const results = [
-                    ...products.map(p => ({ type: 'product', name: p.name, id: p.id })),
-                    ...categories.map(c => ({ type: 'category', name: c.name, id: c.id }))
-                ].filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
-                searchResults.innerHTML = results.map(item => `
-                    <div data-id="${item.id}" data-type="${item.type}">${item.name} (${item.type})</div>
-                `).join('');
-                searchResults.querySelectorAll('div').forEach(result => {
-                    result.addEventListener('click', () => {
-                        const type = result.getAttribute('data-type');
-                        if (type === 'product') {
-                            loadProducts(item.name); // Или перенаправление на страницу товара
-                        } else {
-                            loadProducts(item.name);
-                        }
-                        searchQuery.value = '';
-                        searchResults.innerHTML = '';
-                    });
-                });
-            } catch (err) {
-                searchResults.innerHTML = `<div style="color: red;">${err.message}</div>`;
+
+            // Фильтруем товары по названию
+            for (let card of productCards) {
+                const name = card.getAttribute('data-name');
+                if (name && name.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
             }
         });
     }
-    // Проверка профиля (оставим на потом)
+
+    // Проверка профиля
     const profileLink = document.getElementById('profileLink');
     if (profileLink) {
         profileLink.addEventListener('click', (e) => {
@@ -115,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = '/login.html';
                 }
             } else {
-                window.location.href = '/profile.html'; // Позже создадим страницу профиля
+                window.location.href = '/profile.html';
             }
         });
     }
