@@ -9,9 +9,9 @@ dotenv.config();
 
 const app = express();
 
-// Настройка CORS
+// Настройка CORS для работы с фронтендом
 app.use(cors({
-  origin: 'http://localhost:5000',
+  origin: 'http://localhost:5000', // Убедитесь, что это соответствует вашему серверу
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
 }));
@@ -31,17 +31,21 @@ const transporter = nodemailer.createTransport({
 // Маршрут для регистрации
 app.post('/api/register', async (req, res) => {
   const { firstName, email, password } = req.body;
+
   try {
     const emailCheck = await pool.query('SELECT email FROM users WHERE email = $1', [email]);
     if (emailCheck.rows.length > 0) {
       return res.status(400).json({ error: 'Email already exists' });
     }
+
     const referralCode = Math.random().toString(36).substr(2, 9).toUpperCase();
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const result = await pool.query(
       'INSERT INTO users (first_name, email, password_hash, referral_code, bonus_points) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [firstName, email, hashedPassword, referralCode, 0]
     );
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -51,15 +55,18 @@ app.post('/api/register', async (req, res) => {
 // Маршрут для логина
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (user.rows.length === 0) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
+
     const validPassword = await bcrypt.compare(password, user.rows[0].password_hash);
     if (!validPassword) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
+
     res.status(200).json({ message: 'Login successful', user: user.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -69,19 +76,24 @@ app.post('/api/login', async (req, res) => {
 // Маршрут для "Забыли пароль"
 app.post('/api/forgot-password', async (req, res) => {
   const { email } = req.body;
+
   try {
     const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (user.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
+
     const resetToken = Math.random().toString(36).substr(2, 9);
-    const resetLink = `http://localhost:5000/reset-password?token=${resetToken}`;
+    // Здесь нужно сохранить токен в базе (например, в таблице password_resets), но для простоты пока только отправляем email
+
+    const resetLink = `http://localhost:5000/reset-password?token=${resetToken}`; // Позже добавим реальную страницу
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
       subject: 'Password Reset Request',
       text: `Click the following link to reset your password: ${resetLink}`,
     };
+
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: 'Password reset link sent' });
   } catch (err) {
@@ -171,25 +183,4 @@ app.get('/api/categories', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-});
-
-app.get('/product.html', (req, res) => {
-    const productId = req.query.id;
-    // Здесь можно добавить логику для получения данных о товаре по ID
-    res.send(`
-        <!DOCTYPE html>
-        <html lang="ru">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Product Details</title>
-            <link rel="stylesheet" href="/styles.css">
-        </head>
-        <body>
-            <h1>Product ID: ${productId}</h1>
-            <p>Страница товара (доработать позже)</p>
-            <a href="/">Back to Catalog</a>
-        </body>
-        </html>
-    `);
 });

@@ -8,32 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const products = await response.json();
             if (!response.ok) throw new Error(products.error || 'Failed to load products');
             productList.innerHTML = products.map(product => `
-                <div class="product-card" data-name="${product.name.toLowerCase()}" data-id="${product.id}">
-                    <img src="${product.image_url || '/placeholder.jpg'}" alt="${product.name}" data-product-id="${product.id}">
+                <div class="product-card" data-name="${product.name.toLowerCase()}">
+                    <img src="${product.image_url || '/placeholder.jpg'}" alt="${product.name}">
                     <h3>${product.name}</h3>
                     <p class="price">${product.price} DZD</p>
-                    <button class="add-to-cart">В корзину</button>
+                    <button>Choose options</button>
                 </div>
             `).join('');
-            // Добавляем обработчики после рендера
-            document.querySelectorAll('.product-card img').forEach(img => {
-                img.addEventListener('click', () => {
-                    const productId = img.getAttribute('data-product-id');
-                    window.location.href = `/product.html?id=${productId}`; // Переход на страницу товара
-                });
-            });
-            document.querySelectorAll('.add-to-cart').forEach(button => {
-                button.addEventListener('click', () => {
-                    const productCard = button.closest('.product-card');
-                    const productName = productCard.querySelector('h3').textContent;
-                    const productPrice = productCard.querySelector('.price').textContent;
-                    alert(`Добавлено в корзину: ${productName} - ${productPrice}`);
-                    // Здесь можно добавить логику добавления в корзину (например, в localStorage)
-                });
-            });
         } catch (err) {
             productList.innerHTML = `<p style="color: red;">${err.message}</p>`;
-            console.error('Error loading products:', err);
+            console.error('Error loading products:', err); // Добавим логи для отладки
         }
     }
 
